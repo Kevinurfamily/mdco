@@ -1,0 +1,3 @@
+- name: Run Auto Scraper & Web Generator
+  run: |
+    python run_all.py
