@@ -1,3 +1,39 @@
-- name: Run Auto Scraper & Web Generator
-  run: |
-    python run_all.py
+name: Auto Scraping TKDN & APDN
+
+on:
+  schedule:
+    # Jadwal otomatis 1x24 jam setiap hari pukul 01:00 UTC (08:00 Pagi WIB)
+    - cron: '0 1 * * *' 
+  workflow_dispatch: # Tombol untuk menjalankan manual kapan saja
+
+permissions:
+  contents: write
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          pip install requests pandas openpyxl lxml
+
+      # Menjalankan script gabungan auto scraper & web generator
+      - name: Run Auto Scraper & Web Generator
+        run: |
+          python run_all.py
+
+      - name: Commit and Push Changes to GitHub
+        run: |
+          git config --global user.name "Auto Bot"
+          git config --global user.email "bot@users.noreply.github.com"
+          git add .
+          git commit -m "Auto-update data scraping harian & index.html" || exit 0
+          git push
